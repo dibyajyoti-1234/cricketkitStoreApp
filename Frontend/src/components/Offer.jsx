@@ -1,12 +1,27 @@
-import React from 'react'
-import list from "../../public/list.json"
+import React, { useEffect, useState } from 'react'
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Cards from './Cards';
+import axios from "axios" 
 
 function Offer() {
-  const filterData=list.filter((data)=>data.offer==="yes");
+  const [kit,setkit]=useState([])
+  useEffect(()=>{
+    const getkit=async()=>{
+      try {
+        const res=await axios.get("http://localhost:4001/kit");
+        const data=res.data.filter((data)=>data.offer==="yes")
+        console.log(data);
+        setkit(data)
+      } catch (error) {
+        console.log("errors :",error)
+      }
+    }
+    getkit();
+  },[])
+
   var settings = {
     dots: true,
     infinite: false,
@@ -41,7 +56,7 @@ function Offer() {
       }
     ]
   };
-  console.log(filterData);
+  
   return (
     <>
     <div>
@@ -52,7 +67,7 @@ function Offer() {
     
     <div>
     <Slider {...settings}>
-        {filterData.map((item=>(
+        {kit.map((item=>(
           <Cards item={item} key={item.id}/> //passing item(that is filderdata) from offers.ejx(parent) to card.ejx(child) , this is called props
         )))}
       </Slider>
